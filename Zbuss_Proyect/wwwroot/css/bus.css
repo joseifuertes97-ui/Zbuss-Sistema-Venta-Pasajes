@@ -1,0 +1,49 @@
+﻿.bus_marco {
+    border-collapse: collapse;
+}
+.asiento_marco {
+    width: 50px;
+    height: 50px;
+    list-style: none;
+}
+.asiento_disponible {
+    text-align: center;
+    width: 50px;
+    height: 50px;
+}
+.asiento_ocupado {
+    text-align: center;
+    width: 50px;
+    height: 50px;
+}
+.asiento_deshabilitado {
+    text-align: center;
+    width: 50px;
+    height: 50px;
+    color: dimgray;
+    background-color: dimgray;
+}
+.bus_container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+    width: 300px;
+    height: calc(var(--asiento) * 20);
+    padding: 40px
+}
+.img_bus {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 39%;
+    height: 100%;
+    z-index: -1;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.buses_container .buses {
+    display: flex;
+    padding-top: 1rem;
+    width: 100%
+}

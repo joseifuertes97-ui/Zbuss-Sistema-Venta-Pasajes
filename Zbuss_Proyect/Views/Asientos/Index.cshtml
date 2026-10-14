@@ -1,0 +1,132 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="~/css/bus.css" />
+@if (ViewBag.Alert != null)
+{
+    <div class="alert alert-warning alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">X</button>
+        <h2><i class="bi bi-exclamation-triangle-fill"></i> Alerta!</h2>
+        @ViewBag.Alert
+    </div>
+}
+
+<h1>Asientos</h1>
+<div id="precio">
+</div>
+<div class="row justify-content-start">
+    <h1>Elige tu asiento</h1>
+    <div class="bus_container">
+        <table class="bus_marco" id="buttonsA">
+        </table>
+        <img class="img_bus" src="~/imagenes/bus.jpg" alt="Bus">
+    </div>
+    <div class="container col-4 shadow-sm">
+        <h1>Datos del asiento</h1>
+        <h3 class="font-weight-bold">Código A.</h3>
+        Asiento Nro <span id="txtCodigoA">0</span>
+        <h3 class="font-weight-bold">Precio</h3>
+        S/.<span id="txtPrecio">0</span>
+        <h3 class="font-weight-bold">Inclinación</h3>
+        <span id="txtInclinacion">0</span> Grados
+        <h3 class="font-weight-bold">Nro. del piso</h3>
+        <span id="txtPiso">0</span> Piso
+        <br />
+        <br />
+        <br />
+        <input class="btn btn-success" type="button" value="Proceder a comprar" onclick="compraAsiento()" />
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script>
+    var id = localStorage.getItem("codBus");
+    var VG_RUTA_SERVIDOR = "";
+    var asientos = "";
+    var idAsiento = "";
+    var precioAsiento = "";
+    var codAsiento = "";
+    var igv = 0;
+    var total = 0;
+
+    function compraAsiento() {
+        localStorage.setItem("idAsi", idAsiento);
+        localStorage.setItem("precioAsi", precioAsiento);
+        localStorage.setItem("codAsi", codAsiento);
+        localStorage.setItem("Igv", igv);
+        localStorage.setItem("Total", total);
+        window.location = "@Url.Action("Create","Pasajero")";
+    }
+
+    function mostrarInfo(id) {
+        idAsiento = asientos[id].idasiento;
+        precioAsiento = asientos[id].precio;
+        codAsiento = asientos[id].codAsiento;
+        igv = precioAsiento * 0.18;
+        total = precioAsiento + igv;
+
+        $('#txtCodigoA').text(codAsiento);
+        $('#txtPrecio').text(precioAsiento);
+        $('#txtInclinacion').text(asientos[id].inclinacion);
+        $('#txtPiso').text(asientos[id].pisoBus);
+    }
+    $(document).ready(function () {
+        $.ajax
+            ({
+                type: "POST",
+                url: "/Asientos/SeleccionAsientos",
+                data: { id },
+                dataType: "json",
+                success: function (result) {
+                    if (result == null) {
+                        alert("No se han encontrado asientos asignados a este bus. Pruebe con otro viaje");
+                        location.href = "https://localhost:44326/ViajesUser";
+                    }
+
+                    console.log(result);
+
+                    var html = "";
+                    asientos = result;
+                    var iAsiento = parseInt(0);
+                    for (var i = 0; i <= 13; i++) {
+                        html += "<tr>"
+                        var contAsiento = 0;
+                        for (var j = 0; j <= 4; j++) {
+                            if (contAsiento == 2) {
+                                html += "<td class='asiento_marco'></td>"
+                                contAsiento++;
+                            }
+                            else {
+                                if (asientos[iAsiento] == null) {
+                                    html += "<td class='asiento_marco' disabled><input type='button' value='' class='btn btn-secondary disabled asiento_deshabilitado' disabled></input></td>"
+                                    contAsiento++;
+                                }
+                                else {
+                                    if (asientos[iAsiento].estado == false) {
+                                        html += "<td class='asiento_marco' disabled><input type='button' value='" + asientos[iAsiento].codAsiento + "' class='btn btn-secondary asiento_ocupado' disabled></input></td>"
+                                    }
+                                    else {
+                                        html += "<td class='asiento_marco' onclick='mostrarInfo(" + iAsiento + ")'><input type='button' value='" + asientos[iAsiento].codAsiento + "' class='btn btn-success asiento_disponible'></input></td>"
+                                    }
+                                    iAsiento++;
+                                    contAsiento++;
+                                }
+                            }
+                        }
+                        html += "</tr>"
+                    }
+                    iAsiento = parseInt(0);
+
+                    $('#buttonsA').html(html);
+                },
+                error: function (result) {
+                    alert("ERROR al cargar los asientos");
+                    window.top.location.href = VG_RUTA_SERVIDOR + "ViajesUser/Index";
+                }
+            })
+    })
+</script>
+

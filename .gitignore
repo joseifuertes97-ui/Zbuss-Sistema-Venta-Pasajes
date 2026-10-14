@@ -1,0 +1,28 @@
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# .NET build output
+**/bin/
+**/obj/
+
+# Local configuration / secrets
+.env
+.env.*
+secrets.json
+appsettings.Local.json
+appsettings.*.Local.json
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# NuGet packages (restore with dotnet restore)
+packages/
+*.nupkg
